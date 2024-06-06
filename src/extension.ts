@@ -1,20 +1,12 @@
-import * as vscode from "vscode";
-import { diffSelectionWithClipboard } from "./commands";
-import { URI_SCHEME, textProvider } from "./text-provider";
+import * as vsc from "vscode";
+import { initAddMissingImportsCMD } from "./commands/add-missing-imports";
+import { initDevCMD } from "./commands/dev";
+import { initDifSelectionWithClipboardCMD } from "./commands/diff-selection-with-clipboard";
 
-export function activate(context: vscode.ExtensionContext) {
-  let disposableCMD = vscode.commands.registerCommand(
-    diffSelectionWithClipboard.name,
-    diffSelectionWithClipboard.fn
-  );
-
-  let disposableText = vscode.workspace.registerTextDocumentContentProvider(
-    URI_SCHEME,
-    textProvider
-  );
-
-  context.subscriptions.push(disposableCMD);
-  context.subscriptions.push(disposableText);
+export function activate(context: vsc.ExtensionContext) {
+  initDifSelectionWithClipboardCMD(context);
+  initAddMissingImportsCMD(context);
+  initDevCMD(context);
 }
 
 export function deactivate() {}

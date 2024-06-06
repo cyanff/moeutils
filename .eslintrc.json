@@ -17,10 +17,11 @@
             }
         ],
         "@typescript-eslint/semi": "warn",
-        "curly": "warn",
+        "curly": "off",
         "eqeqeq": "warn",
         "no-throw-literal": "warn",
-        "semi": "off"
+        "semi": "off",
+        "prettier/prettier": 0
     },
     "ignorePatterns": [
         "out",

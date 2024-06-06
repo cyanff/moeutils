@@ -3,12 +3,10 @@
  * This module allows you to set text, and have them be served when the URI is requested.
  */
 
-import * as vscode from "vscode";
-import { TextDocumentContentProvider } from "vscode";
-import { ProviderResult } from "vscode";
-import { Uri } from "vscode";
 import { randomUUID } from "crypto";
-import { createLRU } from "./lru";
+import * as vs from "vscode";
+import { ProviderResult, TextDocumentContentProvider, Uri } from "vscode";
+import { createLRU } from "../lib/lru";
 
 const TEXT_LRU_CAPACITY = 100;
 
@@ -24,7 +22,7 @@ export function setText(text: string): Uri {
   const k = randomUUID();
   lru.set(k, text);
   const uriStr = `${URI_SCHEME}:text/${k}`;
-  return vscode.Uri.parse(uriStr);
+  return vs.Uri.parse(uriStr);
 }
 
 /**
@@ -36,7 +34,7 @@ export const textProvider: TextDocumentContentProvider = {
   provideTextDocumentContent: (uri, _token): ProviderResult<string> => {
     const k = _keyFromURI(uri);
     return lru.get(k) || "";
-  },
+  }
 };
 
 /**
@@ -46,5 +44,4 @@ export const textProvider: TextDocumentContentProvider = {
  * @param uri - The URI to extract the key from.
  * @returns The extracted key from the URI path.
  */
-const _keyFromURI = (uri: vscode.Uri): string =>
-  uri.path.match(/^text\/([a-z\d-]+)/)![1];
+const _keyFromURI = (uri: vs.Uri): string => uri.path.match(/^text\/([a-z\d-]+)/)![1];

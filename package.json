@@ -16,10 +16,26 @@
   "contributes": {
     "commands": [
       {
-          "command": "diffSelectionWithClipboard.diff",
-          "title": "moeutils: Diff Selection with Clipboard"
+        "command": "moe.diffSelectionWithClipboard",
+        "title": "moeutils: Diff Selection with Clipboard"
+      },
+      {
+        "command": "moe.addMissingImports",
+        "title": "moeutils: Add Missing Imports"
+      },
+      {
+        "command": "moe.dev",
+        "title": "moeutils: Execute Dev Command"
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "moe.addMissingImportsFileTree",
+          "name": "moeutils: Add Missing Imports"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
@@ -36,16 +52,20 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.89.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "18.x",
+    "@types/vscode": "^1.89.0",
     "@typescript-eslint/eslint-plugin": "^7.7.1",
     "@typescript-eslint/parser": "^7.7.1",
-    "eslint": "^8.57.0",
-    "esbuild": "^0.20.2",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.4.5",
     "@vscode/test-cli": "^0.0.9",
-    "@vscode/test-electron": "^2.3.9"
+    "@vscode/test-electron": "^2.3.9",
+    "esbuild": "^0.20.2",
+    "eslint": "^8.57.0",
+    "npm-run-all": "^4.1.5",
+    "prettier-plugin-organize-imports": "^3.2.4",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "ignore": "^5.3.1"
   }
 }
