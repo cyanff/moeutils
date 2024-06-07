@@ -1,32 +1,16 @@
-import { on } from "events";
 import * as vs from "vscode";
 import { collapseBackslashes } from "../lib/utils";
 
+// =========================================================
+//  Tree Data Provider
+// =========================================================
 interface FileTreeProvider extends vs.TreeDataProvider<Node> {
   refresh(): void;
 }
 
-interface Node extends vs.TreeItem {
-  children: Node[];
-}
-
-function createNode(label: string, children: Node[] = []): Node {
-  return { label, children };
-}
-
-/**
- * Stores tree data for the tree view
- */
-let root: Node = { children: [] };
-
 const _onChangeTreeDataEv: vs.EventEmitter<Node | undefined | null | void> = new vs.EventEmitter<
   Node | undefined | null | void
 >();
-const onDidChangeTreeData: vs.Event<Node | undefined | null | void> = _onChangeTreeDataEv.event;
-
-onDidChangeTreeData(() => {
-  console.log("Tree data changed");
-});
 
 export const addMissingImportsFileTreeProvider: FileTreeProvider = {
   async getTreeItem(e: Node): Promise<Node> {
@@ -38,9 +22,8 @@ export const addMissingImportsFileTreeProvider: FileTreeProvider = {
     if (!e.children) return [];
     return e.children;
   },
-  refresh() {
-    _onChangeTreeDataEv.fire();
-  }
+  onDidChangeTreeData: _onChangeTreeDataEv.event,
+  refresh: () => _onChangeTreeDataEv.fire()
 };
 
 export function displayIncludedFiles(files: vs.Uri[]) {
@@ -49,8 +32,8 @@ export function displayIncludedFiles(files: vs.Uri[]) {
     path = collapseBackslashes(path);
     segments2D.push([authority, ...path.split("/")].filter(Boolean));
   }
-
   root = treeFromSegments2D(segments2D);
+  addMissingImportsFileTreeProvider.refresh();
 }
 
 /**
@@ -99,6 +82,7 @@ function treeFromSegments2D(segments2D: string[][]): Node {
       if (!extant) {
         const node = createNode(segment);
         cursor.children.push(node);
+        cursor.collapsibleState = vs.TreeItemCollapsibleState.Expanded;
         extant = node;
       }
       // Move the cursor down the path segment
@@ -107,5 +91,22 @@ function treeFromSegments2D(segments2D: string[][]): Node {
     // Reset the cursor back to the root of the tree
     cursor = root;
   }
+  if (root.children.length >= 1) root.collapsibleState = vs.TreeItemCollapsibleState.Expanded;
   return root;
+}
+
+// =========================================================
+//  Tree Data Structure
+// =========================================================
+interface Node extends vs.TreeItem {
+  children: Node[];
+}
+
+/**
+ * Stores tree data for the tree view
+ */
+let root: Node = { children: [] };
+
+function createNode(label: string, children: Node[] = [], collapsibleState: vs.TreeItemCollapsibleState = 0): Node {
+  return { label, children, collapsibleState };
 }

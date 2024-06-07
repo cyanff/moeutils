@@ -1,0 +1,32 @@
+{
+  "React Component": {
+    "prefix": "scomponent",
+    "body": [
+      "interface ${1:Component}Props {",
+      "}",
+      "",
+      "export function $1({}: $1Props) {",
+      "    return (",
+      "        <div>",
+      "        </div>",
+      "    )",
+      "}"
+    ],
+    "description": "Boilerplate for a React component",
+    "isFileTemplate": true
+  },
+  "Comment Block": {
+    "prefix": "sheader-comment",
+    "body": [
+      "// =========================================================",
+      "//  ${1:}",
+      "// ========================================================="
+    ],
+    "description": "Create a comment block with a placeholder for the comment name"
+  },
+  "Line": {
+    "prefix": "sline-comment",
+    "body": ["/* -------------------------------------------------------------------------- */"],
+    "description": "Inserts a line comment"
+  }
+}

@@ -24,6 +24,14 @@
         "title": "moeutils: Add Missing Imports"
       },
       {
+        "command": "moe.applyAddMissingImports",
+        "title": "moeutils: Apply Add Missing Imports",
+        "icon": {
+          "light": "resources/check.svg",
+          "dark": "resources/check.svg"
+        }
+      },
+      {
         "command": "moe.dev",
         "title": "moeutils: Execute Dev Command"
       }
@@ -33,6 +41,15 @@
         {
           "id": "moe.addMissingImportsFileTree",
           "name": "moeutils: Add Missing Imports"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "moe.applyAddMissingImports",
+          "when": "view == moe.addMissingImportsFileTree",
+          "group": "navigation"
         }
       ]
     }
@@ -66,6 +83,8 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "ignore": "^5.3.1"
+    "ignore": "^5.3.1",
+    "vscode-languageclient": "^9.0.1",
+    "vscode-languageserver-protocol": "^3.17.5"
   }
 }

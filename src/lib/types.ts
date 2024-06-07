@@ -1,6 +1,4 @@
-export type Result<T, E extends Error> =
-  | { kind: "ok"; value: T }
-  | { kind: "err"; error: E };
+export type Result<T, E extends Error> = { kind: "ok"; value: T } | { kind: "err"; error: E };
 
 /**
  * Editor commands
