@@ -1,11 +1,7 @@
-import { text } from "stream/consumers";
 import * as vs from "vscode";
+import { getEntireFileRange } from "../lib/file-helpers";
 import { Command } from "../lib/types";
 import { addMissingImportsFileTreeProvider, displayIncludedFiles } from "../providers/add-missing-imports-file-tree";
-
-const IMPORT_DIAGNOSTIC_CODES = new Set([2552, 2304]);
-const IMPORT_FIX_NAME = "import";
-const FIX_ALL_COMMAND = "_typescript.applyFixAllCodeAction";
 
 export const initAddMissingImportsCMD = (context: vs.ExtensionContext) => {
   let d1 = vs.commands.registerCommand(addMissingImportsCMD.name, addMissingImportsCMD.fn);
@@ -54,54 +50,34 @@ const addMissingImportsCMD: Command = {
   }
 };
 
+/**
+ * 
+ * type ApplyCodeActionCommand_args = {
+    readonly document: vscode.TextDocument;
+    readonly diagnostic: vscode.Diagnostic;
+    readonly action: Proto.CodeFixAction;
+    readonly followupAction?: Command;
+  };
+ */
+
 const applyMissingImportsCMD: Command = {
   name: "moe.applyAddMissingImports",
   fn: async () => {
     vs.window.showInformationMessage(`Applying missing imports to ${files.length} files`);
 
-    const importDiagnostics = await getImportDiagnostics(files);
-    for (const { uri, diagnostics } of importDiagnostics) {
-      const textEdits: vs.TextEdit[] = [];
+    for (const file of files) {
+      const range = await getEntireFileRange(file);
 
-      for (const d of diagnostics) {
-        const actions = await vs.commands.executeCommand<vs.CodeAction[]>(
-          "vscode.executeCodeActionProvider",
-          uri,
-          d.range
-        );
-        for (const a of actions) {
-          if (a.edit && a.command?.arguments?.[0]?.action?.fixName === IMPORT_FIX_NAME) {
-            textEdits.push(...a.edit.get(uri));
-          }
-        }
+      const actions = await vs.commands.executeCommand<vs.CodeAction[]>(
+        "vscode.executeCodeActionProvider",
+        file,
+        range
+      );
+      const fixAll = actions?.find((a) => a.title === "Add all missing imports");
+      if (fixAll && fixAll.command) {
+        vs.commands.executeCommand(fixAll.command.command, ...(fixAll.command.arguments || []));
+        break;
       }
-      const combinedEdits = new vs.WorkspaceEdit();
-      combinedEdits.set(uri, textEdits);
-      vs.workspace.applyEdit(combinedEdits);
     }
   }
 };
-
-// =========================================================
-//  Helpers
-// =========================================================
-interface FileDiagnostics {
-  uri: vs.Uri;
-  diagnostics: vs.Diagnostic[];
-}
-
-interface ApplyFixAllCodeActionArg {
-  action: { fixName: any };
-}
-
-function getImportDiagnostics(files: vs.Uri[]): FileDiagnostics[] {
-  const ret: FileDiagnostics[] = [];
-  for (const file of files) {
-    const diagnostics = vs.languages.getDiagnostics(file);
-    const importDiagnostic: vs.Diagnostic[] = diagnostics.filter(
-      (d) => typeof d.code === "number" && IMPORT_DIAGNOSTIC_CODES.has(d.code)
-    );
-    ret.push({ uri: file, diagnostics: importDiagnostic });
-  }
-  return ret;
-}
