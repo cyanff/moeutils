@@ -20,39 +20,10 @@
         "title": "moeutils: Diff Selection with Clipboard"
       },
       {
-        "command": "moe.addMissingImports",
-        "title": "moeutils: Add Missing Imports"
-      },
-      {
-        "command": "moe.applyAddMissingImports",
-        "title": "moeutils: Apply Add Missing Imports",
-        "icon": {
-          "light": "resources/check.svg",
-          "dark": "resources/check.svg"
-        }
-      },
-      {
         "command": "moe.dev",
         "title": "moeutils: Execute Dev Command"
       }
-    ],
-    "views": {
-      "explorer": [
-        {
-          "id": "moe.addMissingImportsFileTree",
-          "name": "moeutils: Add Missing Imports"
-        }
-      ]
-    },
-    "menus": {
-      "view/title": [
-        {
-          "command": "moe.applyAddMissingImports",
-          "when": "view == moe.addMissingImportsFileTree",
-          "group": "navigation"
-        }
-      ]
-    }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run package",
